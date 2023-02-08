@@ -19,12 +19,12 @@ public:
     }
 
     bool isLockedByThisThread() const {
-        return tid_ == this_thread->tid();
+        return tid_ == t_this_thread->tid();
     }
     
     void lock() {
         MCHECK(pthread_mutex_lock(&mutex_));
-        tid_ = this_thread->tid();
+        tid_ = t_this_thread->tid();
     }
 
     void unlock() {
@@ -35,10 +35,11 @@ public:
     int trylock() {
         int ret;
         if (pthread_mutex_trylock(&mutex_) == 0)
-            tid_ = this_thread->tid();
+            tid_ = t_this_thread->tid();
         return ret;
     }
 private:
+    friend class Condition;
     pthread_mutex_t mutex_;
     pid_t tid_;
 };
@@ -49,7 +50,6 @@ public:
 
     ~MutexGuard() { mutex_.unlock();}
 private:
-    friend class Condition;
     Mutex& mutex_;
 };
 

@@ -219,6 +219,13 @@ private:
 
 };
 
+extern Logger::LogLevel g_logLevel;
+
+inline Logger::LogLevel Logger::logLevel()
+{
+    return g_logLevel;
+}
+
 
 class LogFile : boost::noncopyable {
 public:
@@ -233,7 +240,7 @@ public:
     void flush();
     bool rollFile();
 
- private:
+private:
     void append_unlocked(const char* logline, int len);
 
     static std::string getLogFileName(const std::string& basename, time_t* now);
@@ -249,7 +256,7 @@ public:
     time_t startOfPeriod_;
     time_t lastRoll_;
     time_t lastFlush_;
-    std::unique_ptr<FileUtil::AppendFile> file_;
+    //std::unique_ptr<FileUtil::AppendFile> file_;
 
     const static int kRollPerSeconds_ = 60*60*24;
 };
