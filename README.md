@@ -52,4 +52,5 @@
 2. HttpData中的动态申请了Channel并用shared_ptr
 3. Channel中的HttpData*采用普通指针
 4. 一个HttpData对象，在主线程中动态申请，并放到子线程的Epoll中，当它从Epoll中被弹出，便会自动销毁，而其对应Channel，也会随着HttpData在Epoll中弹出，然后随着其HttpData销毁，其也会被销毁。
+
 对一开始就申请的对象和程序结束才销毁的对象EventLoop, Epoll, EventLoopThread，我们在主线程中对Epoll和EventLoop只使用普通指针记载，因为在EventLoop中含有Epoll的shared_ptr，在EventLoopThread中含有EventLoop的shared_ptr，这避免了循环引用，同时，主线程对EventLoopThread采用shared_ptr持有，在其引用计数为1时会自动销毁对应的EventLoopThread, EventLoop, Epoll.
