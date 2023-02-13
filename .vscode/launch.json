@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/ubuntu/MultithreadingWebServer/Main",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "port",
+                    "text": "-p 80",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "thread num",
+                    "text": "-t 8",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

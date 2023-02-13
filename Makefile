@@ -23,7 +23,7 @@ CXXFLAGS := $(CFLAGS)
 libserver.a : $(source)
 	ar rcs $@ $^
 %.o : %.cc
-	g++ $< -c
+	g++ $< -c -g
 
 clean:
 	rm AsyncLogging.o

@@ -118,7 +118,10 @@ HttpData::HttpData(EventLoop *loop, int connfd)
       nowReadPos_(0),
       state_(STATE_PARSE_URI),
       hState_(H_START),
-      keepAlive_(false) {
+      keepAlive_(false),
+      src_addr_(NULL),
+      src_size_(0),
+      src_transferred_(0) {
     // loop_->queueInLoop(bind(&HttpData::setHandlers, this));
     channel_->setReadHandler(bind(&HttpData::handleRead, this));
     channel_->setWriteHandler(bind(&HttpData::handleWrite, this));
@@ -160,29 +163,19 @@ void HttpData::handleRead() {
             inBuffer_.clear();
             break;
         }
-        // cout << inBuffer_ << endl;
-        if (read_num < 0) {
+        
+        if (read_num < 0 || zero) {
             perror("1");
             error_ = true;
             handleError(fd_, 400, "Bad Request");
             break;
         }
-        // else if (read_num == 0)
-        // {
-        //     error_ = true;
-        //     break;
-        // }
-        else if (zero) {
+        else if (read_num == 0) {
             // 有请求出现但是读不到数据，可能是Request
             // Aborted，或者来自网络的数据没有达到等原因
             // 最可能是对端已经关闭了，统一按照对端已经关闭处理
-            // error_ = true;
             connectionState_ = H_DISCONNECTING;
-            if (read_num == 0) {
-                // error_ = true;
-                break;
-            }
-            // cout << "readnum == 0" << endl;
+            break;
         }
 
         if (state_ == STATE_PARSE_URI) {
@@ -273,10 +266,28 @@ void HttpData::handleWrite() {
             events_ = 0;
             error_ = true;
         }
-        if (outBuffer_.size() > 0) events_ |= EPOLLOUT;
+        if (outBuffer_.size() > 0) {events_ |= EPOLLOUT; return;}
+        if (src_addr_ == 0)
+            return;
+        int n;
+        if (n = writen(fd_, (char*)(src_addr_)+src_transferred_, src_size_-src_transferred_) < 0) {
+            perror("writen");
+            events_ = 0;
+            error_ = true;
+            munmap(src_addr_, src_size_);
+            src_addr_ = 0;
+            src_size_ = src_transferred_ = 0;
+        }
+        src_transferred_ += n;
+        if (src_transferred_ < src_size_) {events_ |= EPOLLOUT; return;}
+        munmap(src_addr_, src_size_);
+        src_addr_ = 0;
+        src_size_ = 0;
+        src_transferred_ = 0;
     }
 }
 
+//not use
 void HttpData::handleConn() {
     seperateTimer();
     __uint32_t &events_ = channel_->getEvents();
@@ -317,7 +328,6 @@ void HttpData::handleConn() {
 
 URIState HttpData::parseURI() {
     string &str = inBuffer_;
-    string cop = str;
     // 读到完整的请求行再开始解析请求
     size_t pos = str.find('\r', nowReadPos_);
     if (pos < 0) {
@@ -410,7 +420,7 @@ HeaderState HttpData::parseHeaders() {
         case H_KEY: {
             if (str[i] == ':') {
                 key_end = i;
-            if (key_end - key_start <= 0) return PARSE_HEADER_ERROR;
+                if (key_end - key_start <= 0) return PARSE_HEADER_ERROR;
                 hState_ = H_COLON;
             } else if (str[i] == '\n' || str[i] == '\r')
                 return PARSE_HEADER_ERROR;
@@ -429,24 +439,24 @@ HeaderState HttpData::parseHeaders() {
             break;
         }
         case H_VALUE: {
-        if (str[i] == '\r') {
-            hState_ = H_CR;
-            value_end = i;
-            if (value_end - value_start <= 0) return PARSE_HEADER_ERROR;
-        } else if (i - value_start > 255)
-            return PARSE_HEADER_ERROR;
-        break;
+            if (str[i] == '\r') {
+                hState_ = H_CR;
+                value_end = i;
+                if (value_end - value_start <= 0) return PARSE_HEADER_ERROR;
+            } else if (i - value_start > 255)
+                return PARSE_HEADER_ERROR;
+            break;
         }
-    case H_CR: {
-        if (str[i] == '\n') {
-            hState_ = H_LF;
-            string key(str.begin() + key_start, str.begin() + key_end);
-            string value(str.begin() + value_start, str.begin() + value_end);
-            headers_[key] = value;
-            now_read_line_begin = i;
-        } else
-            return PARSE_HEADER_ERROR;
-        break;
+        case H_CR: {
+            if (str[i] == '\n') {
+                hState_ = H_LF;
+                string key(str.begin() + key_start, str.begin() + key_end);
+                string value(str.begin() + value_start, str.begin() + value_end);
+                headers_[key] = value;
+                now_read_line_begin = i;
+            } else
+                return PARSE_HEADER_ERROR;
+            break;
         }
         case H_LF: {
             if (str[i] == '\r') {
@@ -532,7 +542,7 @@ AnalysisState HttpData::analysisRequest() {
         if (fileName_ == "favicon.ico") {
             header += "Content-Type: image/png\r\n";
             header += "Content-Length: " + to_string(sizeof favicon) + "\r\n";
-            header += "Server: LinYa's Web Server\r\n";
+            header += "Server: Ekko's Web Server\r\n";
 
             header += "\r\n";
             outBuffer_ += header;
@@ -548,7 +558,7 @@ AnalysisState HttpData::analysisRequest() {
         }
         header += "Content-Type: " + filetype + "\r\n";
         header += "Content-Length: " + to_string(sbuf.st_size) + "\r\n";
-        header += "Server: LinYa's Web Server\r\n";
+        header += "Server: Ekko's Web Server\r\n";
         // 头部结束
         header += "\r\n";
         outBuffer_ += header;
@@ -569,9 +579,10 @@ AnalysisState HttpData::analysisRequest() {
             handleError(fd_, 404, "Not Found!");
             return ANALYSIS_ERROR;
         }
-        char *src_addr = static_cast<char *>(mmapRet);
-        outBuffer_ += string(src_addr, src_addr + sbuf.st_size);
-        munmap(mmapRet, sbuf.st_size);
+        src_addr_ = mmapRet;
+        src_size_ = sbuf.st_size;
+        /*outBuffer_ += string(src_addr, src_addr + sbuf.st_size);
+        munmap(mmapRet, sbuf.st_size);*/
         return ANALYSIS_SUCCESS;
     }
     return ANALYSIS_ERROR;
@@ -584,13 +595,13 @@ void HttpData::handleError(int fd, int err_num, string short_msg) {
     body_buff += "<html><title>哎~出错了</title>";
     body_buff += "<body bgcolor=\"ffffff\">";
     body_buff += to_string(err_num) + short_msg;
-    body_buff += "<hr><em> LinYa's Web Server</em>\n</body></html>";
+    body_buff += "<hr><em> Ekko's Web Server</em>\n</body></html>";
 
     header_buff += "HTTP/1.1 " + to_string(err_num) + short_msg + "\r\n";
     header_buff += "Content-Type: text/html\r\n";
     header_buff += "Connection: Close\r\n";
     header_buff += "Content-Length: " + to_string(body_buff.size()) + "\r\n";
-    header_buff += "Server: LinYa's Web Server\r\n";
+    header_buff += "Server: Ekko's Web Server\r\n";
     ;
     header_buff += "\r\n";
     // 错误处理不考虑writen不完的情况

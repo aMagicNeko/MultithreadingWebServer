@@ -1,5 +1,5 @@
 ## 模型
-采用Reactor模式，由主线程负责连接的建立和任务的分发，子线程来完成具体的任务，采用one loop per thread设计，采用线程池限制线程数量和减少频繁创建销毁开销，采用epoll的ET模式，更高效。
+采用Reactor模式，由主线程负责连接的建立和任务的分发，子线程来完成具体的任务，采用one loop per thread设计，采用线程池限制线程数量和减少频繁创建销毁开销，采用epoll的ET模式，发送文件采用mmap零拷贝，采用智能指针管理动态对象的生命周期。
 
 ## 线程模块
 1. 通过EventLoopThreadPool限制线程数量和减少频繁创建销毁开销。
@@ -8,11 +8,16 @@
 
 ## HTTP模块
 1. HttpData对象封装了输入和输出缓冲区、连接的状态、处理的状态、是否错误、Http方法、以及其他属性如keep_alive
-2. 在连接到来时由主线程创建HttpData，然后交由其他线程处理，如果为keep_alive，则会添加对应定时器
+2. 在连接到来时由主线程创建HttpData，通过将bind(HttpData::newEvent(), this)交给子线程EventLoop来添加。添加时会通过Poll::addEvent添加一个定时器，此时对应Channel的Event默认为EPOLL_IN || EPOLL_ET || EPOLL_ONESHOT
+3. 当接受到读事件，对应HTTP::handleRead先读到缓冲区再调用parseURL来分析请求，具体而言，先分离请求首部(通过str.find('\r'))，再在其中寻找GET、POST、HEAD，然后设置HTTP方法成员，继续从刚刚分离的请求首部寻找URL，具体而言，用pos = str.find('/')和str.find(pos, ' ')，介于两者之间的就是文件URL。最后分析HTTP版本号。若URL分析成功，继续分析parseHeaders()：这是一个有限状态转换机：在H_START的情况下，遇到除'\r', '\n'的其他字符，改变分析状态为H_KEY，并记录index；在H_KEY状态下，直到遇到':'，改变分析状态为H_COLON，并记录头部键的名字；在H_COLON的状态下，只需要跳过一个' '，进入H_SPACE_AFTER状态；在H_SPACE_AFTER状态，直接转到H_VALUE状态并记录当前的index；在H_VALUE状态，直到遇到'\r'或者读取超过255字符，若错误直接返回，否则转到H_CR状态；H_CR状态必须读取到'\n'否则返回错误，然后记录当前键，到达H_LF状态；H_LF状态第一个字符必须为'\r'说明HEADERS将结束，进入H_END_CR；H_END_CR状态字符必须为'\n'，进入H_END_LF状态，并终止。然后进入anlysisRequest()，这里对POST请求不进行任何操作，只处理HEADER和GET，先得到相应的头部，然后调用stat()系统函数获得文件大小和类型，这里采用的是零拷贝技术，先打开文件，然后使用mmap，然后关闭描述符并暂存mmap得到的指针.
+4. 处理写事件，先把写缓冲区的数据写到fd里，再把文件mmap后的指针src_addr_写到缓冲区里，然后如果写完了，就munmap掉，注意上述操作中如果有一个没有写完，就继续设置对应的Channel的event为|=EPOLL_OUT
+5. 处理超时事件，调用handleClose()关闭连接并从Poll中移除Channel.
+
 ## 定时器模块
 1. 采用最小堆，直接使用stl中的priority_queue实现
 2. 每个线程只有一个TimerManager，保存在其EventLoop对象中
 3. 在EventLoop的loop()中，当从poll()中唤醒，会去从定器中不断弹出过期事件然后处理。
+
 ## EventLoop模块
 1. Channel封装了描述符、监听事件、返回事件和其四种回调函数(connect, read, write, error)以及其HTTP对象的指针、EventLoop的指针
 2. Epoll封装了Epoll表、添加的fd对应的Chanel，调用poll()并得到返回后会将返回事件返回给其Chanel.Epoll还包含一个TimeManager对象管理定时器.
@@ -40,3 +45,11 @@
 2. 主线程向子线程中添加待执行函数或者添加Channel对象时获取锁
 3. 由于每一个HttpData对象或者Channel对象在交付给子线程后完全由子线程处理，其生命周期也由shared_ptr管理，所以不需要同步操作
 4. 日志模块中Logger对象析构时获取AsyncLogging中的锁来输入到其缓冲区中，AsyncLogging更换空缓冲区时也获取锁
+
+## 动态对象生命周期管理RAII
+对频繁申请和销毁的对象HttpData和Channel
+1. Epoll中的Channel数组、HttpData数组采用shared_ptr
+2. HttpData中的动态申请了Channel并用shared_ptr
+3. Channel中的HttpData*采用普通指针
+4. 一个HttpData对象，在主线程中动态申请，并放到子线程的Epoll中，当它从Epoll中被弹出，便会自动销毁，而其对应Channel，也会随着HttpData在Epoll中弹出，然后随着其HttpData销毁，其也会被销毁。
+对一开始就申请的对象和程序结束才销毁的对象EventLoop, Epoll, EventLoopThread，我们在主线程中对Epoll和EventLoop只使用普通指针记载，因为在EventLoop中含有Epoll的shared_ptr，在EventLoopThread中含有EventLoop的shared_ptr，这避免了循环引用，同时，主线程对EventLoopThread采用shared_ptr持有，在其引用计数为1时会自动销毁对应的EventLoopThread, EventLoop, Epoll.

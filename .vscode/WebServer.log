@@ -1,0 +1,195 @@
+2023-02-13 16:12:44
+New connection from 144.214.0.2:14889 -- Server.cc:43
+2023-02-13 16:12:44
+New connection from 144.214.0.2:9468 -- Server.cc:43
+2023-02-13 16:12:44
+Request: GET / HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
+2023-02-13 16:12:45
+New connection from 144.214.0.2:26366 -- Server.cc:43
+2023-02-13 16:12:45
+Request: GET /favicon.ico HTTP/1.1
+Host: 43.136.99.18
+Connection: keep-alive
+Accept: */*
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Referer: http://43.136.99.18/
+Accept-Encoding: gzip, deflate
+
+ -- HttpData.cc:161
+2023-02-13 16:12:50
+Request: GET / HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
+2023-02-13 16:13:02
+New connection from 205.169.39.63:20403 -- Server.cc:43
+2023-02-13 16:13:02
+Request: GET / HTTP/1.1
+Host: 43.136.99.18
+User-Agent: Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36
+Accept-Encoding: gzip
+
+ -- HttpData.cc:161
+2023-02-13 16:14:13
+New connection from 144.214.0.2:48294 -- Server.cc:43
+2023-02-13 16:14:13
+Request: GET /favicon HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
+2023-02-13 16:14:13
+New connection from 144.214.0.2:37555 -- Server.cc:43
+2023-02-13 16:14:16
+Request: GET /favicon HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
+2023-02-13 16:14:18
+New connection from 144.214.0.2:18369 -- Server.cc:43
+2023-02-13 16:14:18
+Request: GET /favicon HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
+2023-02-13 16:14:18
+New connection from 144.214.0.2:12620 -- Server.cc:43
+2023-02-13 16:14:33
+Request: GET /1.txt HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
+2023-02-13 16:14:35
+New connection from 144.214.0.2:27984 -- Server.cc:43
+2023-02-13 16:14:35
+Request: GET /1.txt HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
+2023-02-13 16:14:35
+New connection from 144.214.0.2:34766 -- Server.cc:43
+2023-02-13 16:15:13
+Request:  -- HttpData.cc:161
+2023-02-13 16:15:33
+New connection from 144.214.0.2:49780 -- Server.cc:43
+2023-02-13 16:15:33
+Request: GET /favicon.ico HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
+2023-02-13 16:15:35
+New connection from 144.214.0.2:38626 -- Server.cc:43
+2023-02-13 16:15:57
+Request: GET /favicon.ico HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
+2023-02-13 16:15:58
+New connection from 144.214.0.2:53448 -- Server.cc:43
+2023-02-13 16:15:58
+Request: GET /favicon.ico HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
+2023-02-13 16:15:59
+New connection from 144.214.0.2:44999 -- Server.cc:43
+2023-02-13 16:16:01
+Request: GET /favicon.ico HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
+2023-02-13 16:16:18
+New connection from 144.214.0.2:16502 -- Server.cc:43
+2023-02-13 16:16:18
+Request: GET /favicon.ico HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
+2023-02-13 16:16:18
+New connection from 144.214.0.2:8690 -- Server.cc:43
+2023-02-13 16:16:23
+Request: GET /1.html HTTP/1.1
+Host: 43.136.99.18
+Upgrade-Insecure-Requests: 1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15
+Accept-Language: en-GB,en;q=0.9
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+
+ -- HttpData.cc:161
